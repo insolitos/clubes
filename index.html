@@ -1,145 +1,563 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Gestor de Clubes Escolares</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestClube - Gestão de Clubes Escolares</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7faff; margin: 0; }
-        .container { max-width: 760px; margin: 2em auto; background: #fff; padding: 2em; border-radius: 10px; box-shadow: 0 2px 12px #95a1b326;}
-        h1, h2 { color: #1d375c; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1em; font-size: 1em;}
-        th, td { border: 1px solid #ccd; padding: 0.6em; text-align: left; }
-        th { background: #eaeffa; }
-        input, select { width: 100%; margin: .3em 0 1em 0; padding: .5em; border: 1px solid #b5bfde; border-radius: 4px;}
-        label { font-weight: 600; display:block;}
-        button { background: #1d375c; color: #fff; border: none; border-radius: 4px; padding: .5em 1em; font-weight: 600; cursor: pointer;}
-        button:hover { background: #325fa6;}
-        .secao { margin-bottom: 3em;}
-        .mini { font-size: .96em; color: #444; }
-        .hidden { display:none;}
-        .topbar { margin-bottom: 2em; }
-        @media (max-width: 600px) {
-          .container { padding: .7em; }
-          table, thead, tbody, th, td, tr { font-size: .95em; }
+        :root {
+            --color-white: #ffffff; --color-black: #000000; --color-gray-50: #f9fafb; --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb; --color-gray-300: #d1d5db; --color-gray-400: #9ca3af; --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563; --color-gray-700: #374151; --color-gray-800: #1f2937; --color-gray-900: #111827;
+            --color-primary-500: #3b82f6; --color-primary-600: #2563eb; --color-primary-700: #1d4ed8;
+            --color-red-500: #ef4444; --color-red-600: #dc2626; --color-green-500: #22c55e;
+            --color-yellow-500: #eab308; --color-blue-500: #3b82f6;
+            --color-background: var(--color-gray-50); --color-surface: var(--color-white); --color-text: var(--color-gray-800);
+            --color-text-secondary: var(--color-gray-500); --color-primary: var(--color-primary-500);
+            --color-primary-hover: var(--color-primary-600); --color-border: var(--color-gray-200);
+            --color-btn-primary-text: var(--color-white); --color-focus-ring: rgba(59, 130, 246, 0.4);
+            --color-error: var(--color-red-500); --color-success: var(--color-green-500);
+            --color-warning: var(--color-yellow-500); --color-info: var(--color-blue-500);
+            --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --radius-sm: 4px; --radius-base: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --duration-normal: 200ms; --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        html[data-theme="dark"] {
+            --color-background: var(--color-gray-900); --color-surface: var(--color-gray-800);
+            --color-text: var(--color-gray-200); --color-text-secondary: var(--color-gray-400);
+            --color-border: var(--color-gray-700); --color-primary: var(--color-primary-500);
+            --color-primary-hover: #60a5fa; --color-btn-primary-text: var(--color-white);
+        }
+        html { font-family: var(--font-family-base); background-color: var(--color-background); color: var(--color-text); transition: background-color var(--duration-normal), color var(--duration-normal); }
+        body { margin: 0; font-size: 14px; }
+        * { box-sizing: border-box; }
+        .header { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: 16px 24px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); transition: background-color var(--duration-normal), border-color var(--duration-normal); }
+        .header__content { display: flex; justify-content: space-between; align-items: center; max-width: 1600px; margin: 0 auto; }
+        .header__brand { display: flex; align-items: center; gap: 12px; color: var(--color-primary); }
+        .header__brand i { font-size: 24px; }
+        .header__brand h1 { font-size: 22px; margin: 0; color: var(--color-text); font-weight: 600; }
+        .header__user { display: flex; align-items: center; gap: 16px; color: var(--color-text-secondary); }
+        .app-layout { display: flex; min-height: calc(100vh - 73px); max-width: 1600px; margin: 0 auto; }
+        .sidebar { width: 240px; background: var(--color-surface); border-right: 1px solid var(--color-border); padding: 16px 0; transition: background-color var(--duration-normal), border-color var(--duration-normal), width var(--duration-normal); }
+        .sidebar__menu { list-style: none; margin: 0; padding: 0; }
+        .sidebar__item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin: 2px 8px; border-radius: var(--radius-base); cursor: pointer; transition: all var(--duration-normal) var(--ease-standard); color: var(--color-text-secondary); font-weight: 500; }
+        .sidebar__item:hover { background: var(--color-gray-100); color: var(--color-text); }
+        html[data-theme="dark"] .sidebar__item:hover { background: var(--color-gray-700); }
+        .sidebar__item.active { background: var(--color-primary); color: var(--color-btn-primary-text); }
+        .sidebar__item i { width: 20px; text-align: center; font-size: 16px; }
+        .main-content { flex: 1; padding: 32px; background: var(--color-background); }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.5s var(--ease-standard); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+        .section-header h2 { margin: 0; color: var(--color-text); font-size: 24px; font-weight: 600; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: var(--radius-base); font-size: 14px; font-weight: 500; cursor: pointer; transition: all var(--duration-normal) var(--ease-standard); border: 1px solid transparent; text-decoration: none; }
+        .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-focus-ring); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn--primary { background: var(--color-primary); color: var(--color-btn-primary-text); border-color: var(--color-primary); }
+        .btn--primary:hover:not(:disabled) { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+        .btn--secondary { background: var(--color-surface); color: var(--color-text); border-color: var(--color-border); box-shadow: var(--shadow-sm); }
+        .btn--secondary:hover:not(:disabled) { background-color: var(--color-gray-100); }
+        html[data-theme="dark"] .btn--secondary:hover:not(:disabled) { background-color: var(--color-gray-700); }
+        .btn--danger { background: var(--color-red-500); color: var(--color-white); border-color: var(--color-red-500); }
+        .btn--danger:hover:not(:disabled) { background: var(--color-red-600); border-color: var(--color-red-600); }
+        .btn i { margin-right: 8px; }
+        .btn--small { padding: 6px 12px; font-size: 12px; }
+        .btn--icon { padding: 8px; }
+        .btn--icon i { margin: 0; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
+        .form-control { display: block; width: 100%; padding: 8px 12px; font-size: 14px; color: var(--color-text); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-base); transition: all var(--duration-normal) var(--ease-standard); }
+        .form-control:focus { border-color: var(--color-primary); outline: none; box-shadow: 0 0 0 3px var(--color-focus-ring); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: all var(--duration-normal) var(--ease-standard); display: flex; flex-direction: column; }
+        .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .card-header { padding: 20px; border-bottom: 1px solid var(--color-border); }
+        .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card-title { margin: 0; font-size: 18px; font-weight: 600; color: var(--color-text); }
+        .card-type { background-color: var(--color-primary-500); color: white; padding: 4px 8px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; white-space: nowrap; }
+        .card-description { color: var(--color-text-secondary); font-size: 14px; line-height: 1.4; margin: 0; }
+        .card-body { padding: 20px; flex-grow: 1; }
+        .card-info { display: flex; flex-direction: column; gap: 12px; }
+        .card-info-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--color-text-secondary); }
+        .card-info-item i { width: 16px; color: var(--color-primary); text-align: center; }
+        .card-actions { display: flex; gap: 8px; padding: 16px; border-top: 1px solid var(--color-border); background-color: var(--color-gray-50); }
+        html[data-theme="dark"] .card-actions { background-color: var(--color-gray-800); }
+        .table-container { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--color-border); }
+        .data-table th { background: var(--color-gray-50); font-weight: 600; color: var(--color-text); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        html[data-theme="dark"] .data-table th { background-color: var(--color-gray-700); }
+        .data-table td { color: var(--color-text-secondary); font-size: 14px; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover { background: var(--color-gray-50); }
+        html[data-theme="dark"] .data-table tr:hover { background-color: var(--color-gray-700); }
+        .table-actions { display: flex; gap: 8px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all var(--duration-normal) var(--ease-standard); }
+        .modal.visible { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--color-surface); border-radius: var(--radius-lg); width: 90%; max-width: 550px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); transform: scale(0.95); transition: transform var(--duration-normal) var(--ease-standard); }
+        .modal.visible .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--color-border); }
+        .modal-header h3 { margin: 0; color: var(--color-text); font-size: 18px; font-weight: 600; }
+        .modal-body { padding: 24px; overflow-y: auto; }
+        .modal-footer { display: flex; gap: 12px; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--color-border); background-color: var(--color-gray-50); }
+        html[data-theme="dark"] .modal-footer { background-color: var(--color-gray-800); }
+        .status-badge { padding: 4px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; text-transform: capitalize; }
+        .status-badge--planeada { background: #e0f2fe; color: #0284c7; }
+        .status-badge--em_curso { background: #fef9c3; color: #a16207; }
+        .status-badge--concluida { background: #dcfce7; color: #166534; }
+        .status-badge--cancelada { background: #fee2e2; color: #991b1b; }
+        .empty-state { text-align: center; padding: 48px; color: var(--color-text-secondary); border: 2px dashed var(--color-border); border-radius: var(--radius-lg); }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; color: var(--color-gray-400); }
+        .empty-state h3 { margin: 16px 0 8px 0; color: var(--color-text); font-size: 20px; }
+        .empty-state p { margin-bottom: 24px; }
+        .loading-state { text-align: center; padding: 48px; }
+        .loader { width: 48px; height: 48px; border: 5px solid var(--color-gray-200); border-bottom-color: var(--color-primary); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #calendario-view { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--color-border); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .calendar-day-name { text-align: center; padding: 8px; font-weight: 600; color: var(--color-text-secondary); font-size: 12px; }
+        .calendar-day { border-right: 1px solid var(--color-border); border-top: 1px solid var(--color-border); min-height: 120px; padding: 8px; }
+        .calendar-day:nth-child(7n) { border-right: none; }
+        .calendar-day.other-month { background-color: var(--color-gray-50); color: var(--color-text-secondary); }
+        html[data-theme="dark"] .calendar-day.other-month { background-color: var(--color-gray-900); }
+        .calendar-day .day-number { font-weight: 600; }
+        .calendar-activity { font-size: 12px; padding: 4px; border-radius: var(--radius-sm); margin-top: 4px; background-color: var(--color-primary-500); color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 16px; border-radius: var(--radius-base); box-shadow: var(--shadow-lg); z-index: 1100; max-width: 320px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s var(--ease-standard); color: white; }
+        .notification--success { background: var(--color-green-500); }
+        .notification--error { background: var(--color-red-500); }
+        .notification--info { background: var(--color-blue-500); }
+        .notification--warning { background: var(--color-yellow-500); }
+        .theme-switch-wrapper { display: flex; align-items: center; gap: 10px; }
+        .theme-switch { display: inline-block; height: 24px; position: relative; width: 44px; }
+        .theme-switch input { display:none; }
+
+        /* */
+        .slider { background-color: var(--color-gray-300); bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; }
+        .slider:before { background-color: var(--color-white); bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; }
+        html[data-theme="dark"] .slider { background-color: var(--color-gray-600); }
+        html[data-theme="dark"] .slider:before { background-color: var(--color-surface); }
+        input:checked + .slider { background-color: var(--color-primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .slider.round { border-radius: 34px; }
+        .slider.round:before { border-radius: 50%; }
+
+        #ajuda-content { line-height: 1.6; }
+        #ajuda-content h3 { font-size: 20px; font-weight: 600; margin-top: 24px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border); }
+        #ajuda-content h4 { font-size: 16px; font-weight: 600; margin-top: 16px; margin-bottom: 8px; }
+        #ajuda-content p { margin-bottom: 12px; }
+        #ajuda-content ul { list-style-position: inside; padding-left: 20px; }
+        #ajuda-content li { margin-bottom: 8px; }
+        #ajuda-content strong { color: var(--color-text); font-weight: 600; }
+        #workspace-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .workspace-box { background: var(--color-surface); padding: 32px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 90%; max-width: 400px; text-align: center; }
+        .app-container { display: none; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 768px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--color-border); }
+            .sidebar__menu { display: flex; overflow-x: auto; padding: 0 8px; justify-content: space-around; }
+            .sidebar__item span { display: none; }
+            .sidebar__item i { font-size: 20px; }
+            .main-content { padding: 16px; }
+            .form-row { grid-template-columns: 1fr; }
+            .header__brand h1 { font-size: 18px; }
+            .header__user { gap: 8px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="topbar">
-            <h1>Gestor de Clubes Escolares</h1>
-            <div class="mini">Os dados são guardados no navegador deste dispositivo.<br>Podes criar vários clubes, membros e atividades.</div>
-        </div>
-
-        <!-- Secção Criação de Clubes -->
-        <div class="secao">
-            <h2>Criar novo clube</h2>
-            <form id="formClube">
-                <label>Nome do clube:<input type="text" id="nomeClube" required></label>
-                <label>Coordenador:<input type="text" id="coordenadorClube" required></label>
-                <button type="submit">Adicionar clube</button>
-            </form>
-        </div>
-
-        <!-- Lista Clubes Existentes -->
-        <div class="secao">
-            <h2>Clubes registados</h2>
-            <table id="tabelaClubes">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Coordenador</th>
-                        <th>Membros</th>
-                        <th>Atividades</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <!-- Secção Gestão de Membros -->
-        <div class="secao hidden" id="secMembros">
-            <h2>Membros de <span id="nomeClubeMembros"></span></h2>
-            <form id="formMembro">
-                <label>Nome do membro:<input type="text" id="nomeMembro" required></label>
-                <label>Função:<input type="text" id="funcaoMembro"></label>
-                <button type="submit">Adicionar membro</button>
-            </form>
-            <table id="tabelaMembros">
-                <thead>
-                    <tr><th>Nome</th><th>Função</th><th></th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <button onclick="fecharMembros()">Fechar membros</button>
-        </div>
-
-        <!-- Secção Gestão de Atividades -->
-        <div class="secao hidden" id="secAtividades">
-            <h2>Atividades do clube <span id="nomeClubeAtividades"></span></h2>
-            <form id="formAtividade">
-                <label>Título:<input type="text" id="tituloAtividade" required></label>
-                <label>Data:<input type="date" id="dataAtividade"></label>
-                <label>Descrição:<input type="text" id="descricaoAtividade"></label>
-                <button type="submit">Adicionar atividade</button>
-            </form>
-            <table id="tabelaAtividades">
-                <thead>
-                    <tr><th>Título</th><th>Data</th><th>Descrição</th><th></th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <button onclick="fecharAtividades()">Fechar atividades</button>
+    <div id="workspace-modal">
+        <div class="workspace-box">
+            <i class="fas fa-users-cog fa-3x text-blue-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2" data-translate="welcomeTitle">Bem-vindo ao GestClube</h2>
+            <p class="text-gray-500 mb-6" data-translate="welcomeSubtitle">Crie ou aceda a um espaço de trabalho para começar.</p>
+            <div class="form-group text-left">
+                <label for="workspace-id" class="form-label" data-translate="workspaceIdLabel">ID do Espaço de Trabalho</label>
+                <input type="text" id="workspace-id" class="form-control" placeholder="ex: escola-secundaria-oeiras">
+                <p class="text-xs text-gray-400 mt-1" data-translate="workspaceIdHelp">Use apenas letras minúsculas, números e hífenes.</p>
+            </div>
+            <button class="btn btn--primary w-full" onclick="acessarWorkspace()"><span data-translate="accessWorkspace">Aceder / Criar</span></button>
         </div>
     </div>
-<script>
-let clubes = JSON.parse(localStorage.getItem('clubes')||'[]');
-let clubeAtivo = null;
-let secMembros = document.getElementById('secMembros');
-let secAtividades = document.getElementById('secAtividades');
 
-function guardar() { localStorage.setItem('clubes', JSON.stringify(clubes)); }
+    <div id="app-container" class="app-container">
+        <header class="header">
+            <div class="header__content">
+                <div class="header__brand">
+                    <i class="fas fa-users-cog"></i>
+                    <h1 data-translate="appName">GestClube</h1>
+                </div>
+                <div class="header__user">
+                    <div id="language-selector-container"></div>
+                    <span id="workspace-id-display" class="font-semibold text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"></span>
+                    <button class="btn btn--secondary btn--small" onclick="sairWorkspace()"><i class="fas fa-sign-out-alt mr-1"></i> <span data-translate="exitWorkspace">Sair</span></button>
+                </div>
+            </div>
+        </header>
 
-function atualizarTabelaClubes() {
-    const tbody = document.querySelector('#tabelaClubes tbody');
-    tbody.innerHTML = clubes.map((clube, i) => `<tr>
-        <td>${clube.nome}</td>
-        <td>${clube.coordenador}</td>
-        <td>
-            <button onclick="abrirMembros(${i})">${clube.membros?.length||0}</button>
-        </td>
-        <td>
-            <button onclick="abrirAtividades(${i})">${clube.atividades?.length||0}</button>
-        </td>
-        <td>
-            <button onclick="apagarClube(${i})">Apagar</button>
-        </td>
-    </tr>`).join('');
-}
+        <div class="app-layout">
+            <nav class="sidebar">
+                <ul class="sidebar__menu">
+                    <li class="sidebar__item active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span data-translate="dashboard"></span></li>
+                    <li class="sidebar__item" data-section="clubes"><i class="fas fa-users"></i><span data-translate="clubs"></span></li>
+                    <li class="sidebar__item" data-section="membros"><i class="fas fa-user-friends"></i><span data-translate="members"></span></li>
+                    <li class="sidebar__item" data-section="atividades"><i class="fas fa-calendar-check"></i><span data-translate="activities"></span></li>
+                    <li class="sidebar__item" data-section="calendario"><i class="fas fa-calendar-alt"></i><span data-translate="calendar"></span></li>
+                    <li class="sidebar__item" data-section="configuracoes"><i class="fas fa-cog"></i><span data-translate="settings"></span></li>
+                    <li class="sidebar__item" data-section="ajuda"><i class="fas fa-question-circle"></i><span data-translate="help"></span></li>
+                </ul>
+            </nav>
 
-document.getElementById('formClube').onsubmit = function(e){
-    e.preventDefault();
-    let nome = document.getElementById('nomeClube').value.trim();
-    let coord = document.getElementById('coordenadorClube').value.trim();
-    if(!nome || !coord) return alert('Nome e coordenador obrigatórios!');
-    clubes.push({nome, coordenador: coord, membros:[], atividades:[]});
-    guardar();
-    atualizarTabelaClubes();
-    this.reset();
-};
-function apagarClube(i){
-    if(confirm("Apagar este clube?")) {
-        clubes.splice(i,1);
-        guardar();
-        atualizarTabelaClubes();
-        fecharMembros();
-        fecharAtividades();
-    }
-}
+            <main class="main-content">
+                <section id="dashboard" class="content-section active"><div class="section-header"><h2 data-translate="dashboardTitle"></h2></div><div id="dashboard-content"></div></section>
+                <section id="clubes" class="content-section"><div class="section-header"><h2 data-translate="clubsTitle"></h2><button class="btn btn--primary" onclick="abrirModalClube()"><i class="fas fa-plus"></i> <span data-translate="newClub"></span></button></div><div id="lista-clubes"></div></section>
+                <section id="membros" class="content-section"><div class="section-header"><h2 data-translate="membersTitle"></h2><button class="btn btn--primary" onclick="abrirModalMembro()"><i class="fas fa-plus"></i> <span data-translate="newMember"></span></button></div><div id="lista-membros"></div></section>
+                <section id="atividades" class="content-section"><div class="section-header"><h2 data-translate="activitiesTitle"></h2><button class="btn btn--primary" onclick="abrirModalAtividade()"><i class="fas fa-plus"></i> <span data-translate="newActivity"></span></button></div><div id="lista-atividades"></div></section>
+                <section id="calendario" class="content-section"><div class="section-header"><h2 data-translate="calendarTitle"></h2></div><div id="calendario-view"></div></section>
+                <section id="configuracoes" class="content-section"><div class="section-header"><h2 data-translate="settingsTitle"></h2></div><div id="configuracoes-content"></div></section>
+                <section id="ajuda" class="content-section">
+                    <div class="section-header"><h2 data-translate="helpTitle"></h2></div>
+                    <div id="ajuda-content" class="bg-surface p-8 rounded-lg shadow-sm"></div>
+                </section>
+            </main>
+        </div>
+    </div>
 
-// ------- Gestão de Membros -------
-function abrirMembros(indice){
-    clubeAtivo = indice;
-    document.getElementById('nomeClubeMembros').textContent = clubes[clubeAtivo].nome;
+    <div id="modal-generico" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="modal-titulo"></h3><button class="btn btn--icon btn--secondary" onclick="fecharModal()"><i class="fas fa-times"></i></button></div>
+            <div id="modal-body" class="modal-body"></div>
+            <div id="modal-footer" class="modal-footer"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, query, getDocs, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // =================================================================================
+        // ADAPTAÇÃO IMPORTANTE PARA PUBLICAÇÃO
+        // Obtenha esta configuração no seu projeto Firebase:
+        // Definições do projeto > Geral > As suas apps > App da Web > Configuração
+        // =================================================================================
+        const firebaseConfig = {
+            apiKey: "COLE_A_SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO_ID",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SUA_APP_ID"
+        };
+        
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Variáveis globais de estado
+        let currentSection = 'dashboard', userId = null, editandoItemId = null, unsubscribes = {}, calendarDate = new Date();
+        let appConfig = { tiposClubes: [], anosEscolaridade: [], funcoesMembro: [] };
+        let currentLanguage = 'pt';
+        let workspaceId = null;
+        let isAppInitialized = false;
+        
+        // OTIMIZAÇÃO JS: Mapa para guardar os clubes e evitar leituras repetidas
+        let clubesMap = new Map();
+
+        const translations = { /* ... O seu objeto de traduções completo fica aqui ... */
+            pt: { appName: "GestClube", loading: "A carregar...", save: "Guardar", cancel: "Cancelar", close: "Fechar", edit: "Editar", delete: "Eliminar", add: "Adicionar", confirm: "Confirmar", actions: "Ações", noDescription: "Sem descrição.", notDefined: "Não definido", select: "Selecione...", dashboard: "Dashboard", clubs: "Clubes", members: "Membros", activities: "Atividades", calendar: "Calendário", settings: "Configurações", help: "Ajuda", dashboardTitle: "Dashboard", clubsTitle: "Gestão de Clubes", membersTitle: "Gestão de Membros", activitiesTitle: "Planeamento de Atividades", calendarTitle: "Calendário de Atividades", settingsTitle: "Configurações", helpTitle: "Guia de Ajuda do Utilizador", newClub: "Novo Clube", newMember: "Novo Membro", newActivity: "Nova Atividade", activeClubs: "Clubes Ativos", totalMembers: "Membros Totais", plannedActivities: "Atividades Planeadas", nextActivities: "Próximas Atividades", noNextActivities: "Nenhuma atividade futura planeada.", clubName: "Nome do Clube", clubType: "Tipo", clubDescription: "Descrição", clubCoordinator: "Coordenador", clubMeetings: "Horário de Reuniões", noClubsFound: "Nenhum clube criado", noClubsFoundDesc: "Comece por criar o seu primeiro clube escolar.", createClub: "Criar Clube", memberName: "Nome", memberClass: "Turma/Ano", memberClub: "Clube", memberRole: "Função", memberContact: "Contacto (Email)", noMembersFound: "Nenhum membro registado", noMembersFoundDesc: "Adicione membros aos seus clubes.", addMember: "Adicionar Membro", activityTitle: "Título", activityDescription: "Descrição", activityDate: "Data", activityTime: "Hora", activityLocation: "Local", activityResponsible: "Responsável", activityStatus: "Estado", statusPlanned: "Planeada", statusInProgress: "Em Curso", statusCompleted: "Concluída", statusCanceled: "Cancelada", noActivitiesFound: "Nenhuma atividade planeada", noActivitiesFoundDesc: "Comece por planear a sua primeira atividade.", planActivity: "Planear Atividade", editClubTitle: "Editar Clube", newClubTitle: "Novo Clube", editMemberTitle: "Editar Membro", newMemberTitle: "Novo Membro", editActivityTitle: "Editar Atividade", newActivityTitle: "Nova Atividade", confirmDeleteTitle: "Confirmar Eliminação", confirmDeleteBody: "Tem a certeza que deseja eliminar este item? Esta ação não pode ser desfeita.", fillRequiredFields: "Preencha os campos obrigatórios.", saveSuccess: "Guardado com sucesso!", saveError: "Erro ao guardar.", deleteSuccess: "Item eliminado com sucesso!", deleteError: "Erro ao eliminar.", exportingData: "A preparar o seu ficheiro...", noDataToExport: "Não existem dados para exportar.", exportSuccess: "Exportação concluída!", exportError: "Erro na exportação.", personalization: "Personalização", manageClubTypes: "Gerir Tipos de Clube", manageSchoolYears: "Gerir Anos de Escolaridade", manageMemberRoles: "Gerir Funções de Membros", appearance: "Aparência", darkTheme: "Tema Escuro", exportData: "Exportar Dados", exportDescription: "Faça o download dos dados da sua aplicação em formato CSV.", exportClubs: "Exportar Clubes", exportMembers: "Exportar Membros", exportActivities: "Exportar Atividades", dangerZone: "Zona de Perigo", dangerZoneDescription: "Estas ações são irreversíveis. Tenha cuidado.", clearAllData: "Limpar Dados do Workspace", manageCategoryTitle: "Gerir {category}", addNewItemPlaceholder: "Adicionar novo item...", confirmClearAllTitle: "Confirmar Limpeza do Workspace", confirmClearAllBody: "Tem a certeza absoluta? Esta ação irá apagar permanentemente <strong>todos os clubes, membros e atividades</strong> deste workspace.", confirmClearAllPrompt: "Para confirmar, escreva \"<b>APAGAR</b>\" no campo abaixo.", wordToConfirmDeletion: "APAGAR", confirmClearAllButton: "Confirmar e Apagar Tudo", clearingData: "A limpar todos os dados...", clearSuccess: "Todos os dados do workspace foram apagados!", clearError: "Erro ao limpar os dados.", settingsSaved: "Configurações guardadas!", settingsSaveError: "Erro ao guardar configurações.", welcomeTitle: "Bem-vindo ao GestClube", welcomeSubtitle: "Crie ou aceda a um espaço de trabalho para começar.", workspaceIdLabel: "ID do Espaço de Trabalho", workspaceIdHelp: "Use apenas letras minúsculas, números e hífenes.", accessWorkspace: "Aceder / Criar", exitWorkspace: "Sair", invalidWorkspaceId: "ID do espaço de trabalho inválido. Use apenas letras minúsculas, números e hífenes." },
+            en: { appName: "ClubManager", loading: "Loading...", save: "Save", cancel: "Cancel", close: "Close", edit: "Edit", delete: "Delete", add: "Add", confirm: "Confirm", actions: "Actions", noDescription: "No description.", notDefined: "Not defined", select: "Select...", dashboard: "Dashboard", clubs: "Clubs", members: "Members", activities: "Activities", calendar: "Calendar", settings: "Settings", help: "Help", dashboardTitle: "Dashboard", clubsTitle: "Club Management", membersTitle: "Member Management", activitiesTitle: "Activity Planning", calendarTitle: "Activity Calendar", settingsTitle: "Settings", helpTitle: "User Help Guide", newClub: "New Club", newMember: "New Member", newActivity: "New Activity", activeClubs: "Active Clubs", totalMembers: "Total Members", plannedActivities: "Planned Activities", nextActivities: "Next Activities", noNextActivities: "No future activities planned.", clubName: "Club Name", clubType: "Type", clubDescription: "Description", clubCoordinator: "Coordinator", clubMeetings: "Meeting Schedule", noClubsFound: "No clubs created", noClubsFoundDesc: "Start by creating your first school club.", createClub: "Create Club", memberName: "Name", memberClass: "Class/Year", memberClub: "Club", memberRole: "Role", memberContact: "Contact (Email)", noMembersFound: "No members registered", noMembersFoundDesc: "Add members to your clubs.", addMember: "Add Member", activityTitle: "Title", activityDescription: "Description", activityDate: "Date", activityTime: "Time", activityLocation: "Location", activityResponsible: "Responsible", activityStatus: "Status", statusPlanned: "Planned", statusInProgress: "In Progress", statusCompleted: "Completed", statusCanceled: "Canceled", noActivitiesFound: "No activities planned", noActivitiesFoundDesc: "Start by planning your first activity.", planActivity: "Plan Activity", editClubTitle: "Edit Club", newClubTitle: "New Club", editMemberTitle: "Edit Member", newMemberTitle: "New Member", editActivityTitle: "Edit Activity", newActivityTitle: "New Activity", confirmDeleteTitle: "Confirm Deletion", confirmDeleteBody: "Are you sure you want to delete this item? This action cannot be undone.", fillRequiredFields: "Please fill in all required fields.", saveSuccess: "Saved successfully!", saveError: "Error saving.", deleteSuccess: "Item deleted successfully!", deleteError: "Error deleting.", exportingData: "Preparing your file...", noDataToExport: "There is no data to export.", exportSuccess: "Export completed!", exportError: "Error during export.", personalization: "Personalização", manageClubTypes: "Manage Club Types", manageSchoolYears: "Manage School Years", manageMemberRoles: "Manage Member Roles", appearance: "Appearance", darkTheme: "Dark Theme", exportData: "Export Data", exportDescription: "Download your application data in CSV format.", exportClubs: "Export Clubs", exportMembers: "Export Members", exportActivities: "Export Activities", dangerZone: "Danger Zone", dangerZoneDescription: "These actions are irreversible. Be careful.", clearAllData: "Clear Workspace Data", manageCategoryTitle: "Manage {category}", addNewItemPlaceholder: "Add new item...", confirmClearAllTitle: "Confirm Workspace Deletion", confirmClearAllBody: "Are you absolutely sure? This action will permanently delete <strong>all clubs, members, and activities</strong> in this workspace.", confirmClearAllPrompt: "To confirm, type \"<b>DELETE</b>\" in the field below.", wordToConfirmDeletion: "DELETE", confirmClearAllButton: "Confirm and Delete All", clearingData: "Clearing all data...", clearSuccess: "All workspace data has been deleted!", clearError: "Error clearing data.", settingsSaved: "Settings saved!", settingsSaveError: "Error saving settings.", welcomeTitle: "Welcome to ClubManager", welcomeSubtitle: "Create or access a workspace to get started.", workspaceIdLabel: "Workspace ID", workspaceIdHelp: "Use only lowercase letters, numbers, and hyphens.", accessWorkspace: "Access / Create", exitWorkspace: "Exit", invalidWorkspaceId: "Invalid workspace ID. Use only lowercase letters, numbers, and hyphens." },
+            es: { appName: "GestClub", loading: "Cargando...", save: "Guardar", cancel: "Cancelar", close: "Cerrar", edit: "Editar", delete: "Eliminar", add: "Añadir", confirm: "Confirmar", actions: "Acciones", noDescription: "Sin descripción.", notDefined: "No definido", select: "Seleccione...", dashboard: "Panel", clubs: "Clubes", members: "Miembros", activities: "Actividades", calendar: "Calendario", settings: "Configuración", help: "Ayuda", dashboardTitle: "Panel", clubsTitle: "Gestión de Clubes", membersTitle: "Gestión de Miembros", activitiesTitle: "Planificación de Actividades", calendarTitle: "Calendario de Actividades", settingsTitle: "Configuración", helpTitle: "Guía de Ayuda del Usuario", newClub: "Nuevo Club", newMember: "Nuevo Miembro", newActivity: "Nueva Actividad", activeClubs: "Clubes Activos", totalMembers: "Miembros Totales", plannedActivities: "Actividades Planificadas", nextActivities: "Próximas Actividades", noNextActivities: "No hay actividades futuras planificadas.", clubName: "Nombre del Club", clubType: "Tipo", clubDescription: "Descripción", clubCoordinator: "Coordinador", clubMeetings: "Horario de Reuniones", noClubsFound: "No hay clubes creados", noClubsFoundDesc: "Empiece por crear su primer club escolar.", createClub: "Crear Club", memberName: "Nombre", memberClass: "Clase/Año", memberClub: "Club", memberRole: "Función", memberContact: "Contacto (Email)", noMembersFound: "No hay miembros registrados", noMembersFoundDesc: "Añada miembros a sus clubes.", addMember: "Añadir Miembro", activityTitle: "Título", activityDescription: "Descripción", activityDate: "Fecha", activityTime: "Hora", activityLocation: "Lugar", activityResponsible: "Responsable", activityStatus: "Estado", statusPlanned: "Planificada", statusInProgress: "En Curso", statusCompleted: "Completada", statusCanceled: "Cancelada", noActivitiesFound: "No hay actividades planificadas", noActivitiesFoundDesc: "Empiece por planificar su primera actividad.", planActivity: "Planificar Actividad", editClubTitle: "Editar Club", newClubTitle: "Nuevo Club", editMemberTitle: "Editar Miembro", newMemberTitle: "Nuevo Miembro", editActivityTitle: "Editar Actividad", newActivityTitle: "Nueva Actividad", confirmDeleteTitle: "Confirmar Eliminación", confirmDeleteBody: "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.", fillRequiredFields: "Por favor, rellene todos los campos obligatorios.", saveSuccess: "¡Guardado con éxito!", saveError: "Error al guardar.", deleteSuccess: "¡Elemento eliminado con éxito!", deleteError: "Error al eliminar.", exportingData: "Preparando su archivo...", noDataToExport: "No hay datos para exportar.", exportSuccess: "¡Exportación completada!", exportError: "Error durante la exportación.", personalization: "Personalización", manageClubTypes: "Gestionar Tipos de Club", manageSchoolYears: "Gestionar Años Escolares", manageMemberRoles: "Gestionar Roles de Miembros", appearance: "Apariencia", darkTheme: "Tema Oscuro", exportData: "Exportar Datos", exportDescription: "Descargue los datos de su aplicación en formato CSV.", exportClubs: "Exportar Clubes", exportMembers: "Exportar Miembros", exportActivities: "Exportar Actividades", dangerZone: "Zona de Peligro", dangerZoneDescription: "Estas acciones son irreversibles. Tenga cuidado.", clearAllData: "Limpiar Datos del Workspace", manageCategoryTitle: "Gestionar {category}", addNewItemPlaceholder: "Añadir nuevo elemento...", confirmClearAllTitle: "Confirmar Limpieza del Workspace", confirmClearAllBody: "¿Está absolutamente seguro? Esta acción eliminará permanentemente <strong>todos los clubes, miembros y actividades</strong> de este workspace.", confirmClearAllPrompt: "Para confirmar, escriba \"<b>BORRAR</b>\" en el campo de abajo.", wordToConfirmDeletion: "BORRAR", confirmClearAllButton: "Confirmar y Borrar Todo", clearingData: "Limpiando todos los datos...", clearSuccess: "¡Todos los datos del workspace han sido eliminados!", clearError: "Error al limpiar los datos.", settingsSaved: "¡Configuración guardada!", settingsSaveError: "Error al guardar la configuración.", welcomeTitle: "Bienvenido a GestClub", welcomeSubtitle: "Cree o acceda a un espacio de trabajo para comenzar.", workspaceIdLabel: "ID del Espaço de Trabalho", workspaceIdHelp: "Use solo letras minúsculas, números y guiones.", accessWorkspace: "Acceder / Crear", exitWorkspace: "Salir", invalidWorkspaceId: "ID de espacio de trabajo no válido. Use solo letras minúsculas, números y guiones." }
+        };
+
+        // CORREÇÃO JS: Mapa para traduções de estado
+        const statusTranslationMap = { planeada: 'statusPlanned', 'em_curso': 'statusInProgress', concluida: 'statusCompleted', cancelada: 'statusCanceled' };
+        
+        const t = (key, params = {}) => {
+            let translation = translations[currentLanguage]?.[key] || key;
+            for (const param in params) { translation = translation.replace(`{${param}}`, params[param]); }
+            return translation;
+        };
+
+        const getCollectionPath = (collectionName) => `workspaces/${workspaceId}/${collectionName}`;
+        const getConfigPath = () => `workspaces/${workspaceId}/config/categorias`;
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !isAppInitialized) {
+                isAppInitialized = true;
+                userId = user.uid;
+                await checkWorkspace();
+            } else if (!user) {
+                isAppInitialized = false; 
+                try {
+                    await signInAnonymously(auth);
+                } catch (error) {
+                    console.error("Erro na autenticação anónima:", error);
+                    document.body.innerHTML = "Falha na autenticação. Verifique a consola e a configuração do Firebase.";
+                }
+            }
+        });
+
+        async function checkWorkspace() {
+            workspaceId = localStorage.getItem('gestclube-workspaceId');
+            if (workspaceId) {
+                document.getElementById('workspace-modal').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                document.getElementById('workspace-id-display').textContent = workspaceId;
+                await startApp();
+            } else {
+                document.getElementById('workspace-modal').style.display = 'flex';
+                document.getElementById('app-container').style.display = 'none';
+                await setLanguage(localStorage.getItem('language') || 'pt', false);
+            }
+        }
+
+        async function acessarWorkspace() {
+            const input = document.getElementById('workspace-id');
+            const id = input.value.trim().toLowerCase();
+            const regex = /^[a-z0-9-]+$/;
+            if (id && regex.test(id)) {
+                workspaceId = id;
+                localStorage.setItem('gestclube-workspaceId', workspaceId);
+                await checkWorkspace();
+            } else {
+                mostrarNotificacao(t('invalidWorkspaceId'), 'error');
+            }
+        }
+
+        function sairWorkspace() {
+            localStorage.removeItem('gestclube-workspaceId');
+            workspaceId = null;
+            Object.values(unsubscribes).forEach(unsub => unsub());
+            unsubscribes = {};
+            checkWorkspace();
+        }
+
+        async function startApp() {
+            aplicarTemaSalvo();
+            await carregarConfiguracoesApp();
+            await listenToClubes(); // OTIMIZAÇÃO: Iniciar listener de clubes
+            await setLanguage(localStorage.getItem('language') || 'pt', true);
+            configurarEventListeners();
+        }
+        
+        // OTIMIZAÇÃO JS: Função para ouvir alterações nos clubes em tempo real
+        async function listenToClubes() {
+            if (unsubscribes.clubes) unsubscribes.clubes();
+            const q = query(collection(db, getCollectionPath('clubes')));
+            unsubscribes.clubes = onSnapshot(q, (snapshot) => {
+                const tempMap = new Map();
+                snapshot.forEach(doc => tempMap.set(doc.id, doc.data()));
+                clubesMap = tempMap;
+                // Se estivermos numa página dependente, atualiza a sua vista
+                if (['membros', 'atividades', 'clubes', 'dashboard'].includes(currentSection)) {
+                    navegarPara(currentSection, true);
+                }
+            }, (error) => console.error("Erro ao carregar clubes em tempo real:", error));
+        }
+
+        async function carregarConfiguracoesApp() {
+            const configRef = doc(db, getConfigPath());
+            try {
+                const configSnap = await getDoc(configRef);
+                if (configSnap.exists()) {
+                    appConfig = configSnap.data();
+                } else {
+                    const defaultConfig = {
+                        tiposClubes: ["Jornal Escolar", "Clube de Ciência", "Clube de Leitura", "Clube de Desporto", "Outros"],
+                        anosEscolaridade: ["5º ano", "6º ano", "7º ano", "8º ano", "9º ano", "10º ano", "11º ano", "12º ano"],
+                        funcoesMembro: ["Coordenador", "Secretário", "Tesoureiro", "Redator", "Membro"]
+                    };
+                    await setDoc(configRef, defaultConfig);
+                    appConfig = defaultConfig;
+                }
+            } catch (error) { console.error("Falha ao carregar/criar config:", error); }
+        }
+
+        function configurarEventListeners() {
+            document.querySelectorAll('.sidebar__item').forEach(item => item.addEventListener('click', () => navegarPara(item.dataset.section)));
+            document.querySelector('.modal').addEventListener('click', (e) => { if (e.target.classList.contains('modal')) fecharModal(); });
+        }
+        
+        async function navegarPara(section, forceRefresh = false) {
+            if (!forceRefresh) {
+                currentSection = section;
+            }
+            document.querySelectorAll('.sidebar__item').forEach(item => item.classList.toggle('active', item.dataset.section === section));
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.toggle('active', sec.id === section));
+            
+            // OTIMIZAÇÃO: Gerir listeners específicos da página
+            if (unsubscribes.membros) { unsubscribes.membros(); delete unsubscribes.membros; }
+            if (unsubscribes.atividades) { unsubscribes.atividades(); delete unsubscribes.atividades; }
+
+            updateUIText();
+            
+            const loadFunction = {
+                dashboard: carregarDashboard, clubes: carregarClubes, membros: carregarMembros,
+                atividades: carregarAtividades, calendario: renderizarCalendario, configuracoes: carregarConfiguracoes,
+                ajuda: carregarAjuda
+            }[section];
+            if (loadFunction) await loadFunction();
+        }
+
+        async function carregarDashboard() {
+            const container = document.getElementById('dashboard-content');
+            container.innerHTML = `<div class="loading-state"><div class="loader"></div><p>${t('loading')}</p></div>`;
+            try {
+                const [membrosSnap, atividadesSnap] = await Promise.all([
+                    getDocs(collection(db, getCollectionPath('membros'))),
+                    getDocs(collection(db, getCollectionPath('atividades')))
+                ]);
+                const atividades = atividadesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const proximasAtividades = atividades
+                    .filter(a => a.estado === 'planeada' && new Date(a.data) >= new Date())
+                    .sort((a, b) => new Date(a.data) - new Date(b.data)).slice(0, 5);
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-surface p-6 rounded-lg shadow-sm flex items-center gap-4"><i class="fas fa-users text-2xl text-blue-500 bg-blue-100 p-3 rounded-full"></i><div><p class="text-text-secondary">${t('activeClubs')}</p><h3 class="text-2xl font-bold">${clubesMap.size}</h3></div></div>
+                        <div class="bg-surface p-6 rounded-lg shadow-sm flex items-center gap-4"><i class="fas fa-user-friends text-2xl text-green-500 bg-green-100 p-3 rounded-full"></i><div><p class="text-text-secondary">${t('totalMembers')}</p><h3 class="text-2xl font-bold">${membrosSnap.size}</h3></div></div>
+                        <div class="bg-surface p-6 rounded-lg shadow-sm flex items-center gap-4"><i class="fas fa-calendar-check text-2xl text-yellow-500 bg-yellow-100 p-3 rounded-full"></i><div><p class="text-text-secondary">${t('plannedActivities')}</p><h3 class="text-2xl font-bold">${atividades.filter(a => a.estado === 'planeada').length}</h3></div></div>
+                    </div>
+                    <div class="bg-surface p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">${t('nextActivities')}</h3><div class="space-y-4">
+                        ${proximasAtividades.length > 0 ? proximasAtividades.map(at => {
+                            const clube = clubesMap.get(at.clube_id);
+                            return `<div class="p-4 border border-border rounded-md bg-background"><p class="font-semibold">${at.titulo}</p><p class="text-sm text-text-secondary">${clube?.nome || 'Clube desconhecido'} | ${formatarData(at.data)}</p></div>`;
+                        }).join('') : `<p class="text-text-secondary">${t('noNextActivities')}</p>`}
+                        </div></div>`;
+            } catch (error) {
+                console.error("Erro ao carregar dashboard:", error);
+                container.innerHTML = `<p class="text-red-500">${t('saveError')}</p>`;
+            }
+        }
+        
+        function carregarClubes() {
+            const clubesArray = Array.from(clubesMap.entries()).map(([id, data]) => ({ id, ...data }));
+            renderizarClubes(clubesArray);
+        }
+
+        function carregarMembros() {
+            const container = document.getElementById('lista-membros');
+            container.innerHTML = `<div class="loading-state"><div class="loader"></div><p>${t('loading')}</p></div>`;
+            const q = query(collection(db, getCollectionPath('membros')));
+            unsubscribes.membros = onSnapshot(q, (querySnapshot) => {
+                const membros = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderizarMembros(membros);
+            }, (error) => { console.error("Erro ao carregar membros: ", error); container.innerHTML = `<p>${t('saveError')}</p>`; });
+        }
+
+        function carregarAtividades() {
+            const container = document.getElementById('lista-atividades');
+            container.innerHTML = `<div class="loading-state"><div class="loader"></div><p>${t('loading')}</p></div>`;
+            const q = query(collection(db, getCollectionPath('atividades')));
+            unsubscribes.atividades = onSnapshot(q, (querySnapshot) => {
+                const atividades = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderizarAtividades(atividades);
+            }, (error) => { console.error("Erro ao carregar atividades: ", error); container.innerHTML = `<p>${t('saveError')}</p>`; });
+        }
+        
+        function renderizarClubes(clubes) {
+            const container = document.getElementById('lista-clubes');
+            if (clubes.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><h3>${t('noClubsFound')}</h3><p>${t('noClubsFoundDesc')}</p><button class="btn btn--primary" onclick="abrirModalClube()"><i class="fas fa-plus"></i> ${t('createClub')}</button></div>`;
+                return;
+            }
+            container.innerHTML = `<div class="cards-grid">${clubes.map(clube => `
+                <div class="card">
+                    <div class="card-header"><div class="card-header-top"><h3 class="card-title">${clube.nome}</h3><span class="card-type">${clube.tipo}</span></div><p class="card-description">${clube.descricao || t('noDescription')}</p></div>
+                    <div class="card-body"><div class="card-info"><div class="card-info-item"><i class="fas fa-user-tie"></i><span>${clube.coordenador}</span></div><div class="card-info-item"><i class="fas fa-clock"></i><span>${clube.reunioes || t('notDefined')}</span></div></div></div>
+                    <div class="card-actions"><button class="btn btn--secondary btn--small" onclick="abrirModalClube('${clube.id}')"><i class="fas fa-edit"></i> ${t('edit')}</button><button class="btn btn--danger btn--small" onclick="confirmarEliminacao('clubes', '${clube.id}')"><i class="fas fa-trash"></i> ${t('delete')}</button></div>
+                </div>`).join('')}</div>`;
+        }
+
+        function renderizarMembros(membros) {
+            const container = document.getElementById('lista-membros');
+            if (membros.length === 0) {
+                 container.innerHTML = `<div class="empty-state"><i class="fas fa-user-friends"></i><h3>${t('noMembersFound')}</h3><p>${t('noMembersFoundDesc')}</p><button class="btn btn--primary" onclick="abrirModalMembro()"><i class="fas fa-plus"></i> ${t('addMember')}</button></div>`;
+                return;
+            }
+            container.innerHTML = `<div class="table-container"><table class="data-table"><thead><tr><th>${t('memberName')}</th><th>${t('memberClass')}</th><th>${t('memberClub')}</th><th>${t('memberRole')}</th><th>${t('memberContact')}</th><th>${t('actions')}</th></tr></thead><tbody>
+                ${membros.map(membro => `<tr><td>${membro.nome}</td><td>${membro.turma}</td><td>${clubesMap.get(membro.clube_id)?.nome || 'N/A'}</td><td>${membro.funcao}</td><td>${membro.contacto || 'N/A'}</td><td class="table-actions"><button class="btn btn--secondary btn--small btn--icon" onclick="abrirModalMembro('${membro.id}')"><i class="fas fa-edit"></i></button><button class="btn btn--danger btn--small btn--icon" onclick="confirmarEliminacao('membros', '${membro.id}')"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
+            </tbody></table></div>`;
+        }
+        
+        // CORREÇÃO JS: Função de renderização de atividades corrigida
+        function renderizarAtividades(atividades) {
+            const container = document.getElementById('lista-atividades');
+            if (atividades.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-check"></i><h3>${t('noActivitiesFound')}</h3><p>${t('noActivitiesFoundDesc')}</p><button class="btn btn--primary" onclick="abrirModalAtividade()"><i class="fas fa-plus"></i> ${t('planActivity')}</button></div>`;
+                return;
+            }
+            container.innerHTML = `<div class="cards-grid">${atividades.map(at => {
+                const statusKey = statusTranslationMap[at.estado] || 'notDefined';
+                const statusClass = at.estado.replace(' ', '_');
+                return `
+                <div class="card">
+                    <div class="card-header"><div class="card-header-top"><h3 class="card-title">${at.titulo}</h3><span class="status-badge status-badge--${statusClass}">${t(statusKey)}</span></div><p class="card-description">${at.descricao || t('noDescription')}</p></div>
+                    <div class="card-body"><div class="card-info"><div class="card-info-item"><i class="fas fa-users"></i><span>${clubesMap.get(at.clube_id)?.nome || 'N/A'}</span></div><div class="card-info-item"><i class="fas fa-calendar"></i><span>${formatarData(at.data)} às ${at.hora}</span></div><div class="card-info-item"><i class="fas fa-map-marker-alt"></i><span>${at.local || 'N/A'}</span></div><div class="card-info-item"><i class="fas fa-user-tie"></i><span>${at.responsavel || 'N/A'}</span></div></div></div>
+                    <div class="card-actions"><button class="btn btn--secondary btn--small" onclick="abrirModalAtividade('${at.id}')"><i class="fas fa-edit"></i> ${t('edit')}</button><button class="btn btn--danger btn--small" onclick="confirmarEliminacao('atividades', '${at.id}')"><i class="fas fa-trash"></i> ${t('delete')}</button></div>
+                </div>`;
+            }).join('')}</div>`;
+        }
+        
+        // As restantes funções (modais, guardar, eliminar, etc.) permanecem maioritariamente iguais.
+        // O código foi omitido aqui para brevidade, mas deve ser incluído no ficheiro final.
+        // ... (Cole aqui o resto do seu código JS: abrirModalClube, guardarClube, etc.) ...
+        
+        // Funções para exportar e expor no 'window'
+        Object.assign(window, {
+             acessarWorkspace, sairWorkspace, setLanguage, navegarPara,
+             abrirModalClube, abrirModalMembro, abrirModalAtividade, fecharModal,
+             guardarClube, guardarMembro, guardarAtividade, confirmarEliminacao,
+             eliminarItem, mudarMes, exportarDados, confirmarLimpezaTotal,
+             executarLimpezaTotal, toggleTheme, abrirModalGerirCategoria,
+             adicionarItemCategoria, removerItemCategoria
+        });
+
+        // Cole aqui o resto do seu código Javascript (funções de modais, guardar, eliminar, etc.)
+        // O código abaixo é uma representação das funções que devem ser incluídas.
+
+        async function setLanguage(lang, shouldNavigate = true) { currentLanguage = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; renderLanguageSelector(); updateUIText(); if (workspaceId && shouldNavigate) { await navegarPara(currentSection, true); } }
+        function updateUIText() { document.querySelectorAll('[data-translate]').forEach(el => { const key = el.getAttribute('data-translate'); const translation = t(key); if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = translation; } else { el.textContent = translation; } }); }
+        function renderLanguageSelector() { const container = document.getElementById('language-selector-container'); if (!container) return; container.innerHTML = `<select id="language-selector" class="form-control" onchange="setLanguage(this.value)"><option value="pt">Português</option><option value="en">English</option><option value="es">Español</option></select>`; const selector = container.querySelector('#language-selector'); if (selector) { selector.value = currentLanguage; } }
+        async function abrirModalClube(id = null) { editandoItemId = id; const clube = id ? (await getDoc(doc(db, getCollectionPath('clubes'), id))).data() : {}; document.getElementById('modal-titulo').textContent = t(id ? 'editClubTitle' : 'newClubTitle'); document.getElementById('modal-body').innerHTML = `<div class="form-group"><label class="form-label">${t('clubName')}</label><input type="text" id="clube-nome" class="form-control" value="${clube.nome || ''}" required></div><div class="form-group"><label class="form-label">${t('clubType')}</label><select id="clube-tipo" class="form-control" required>${appConfig.tiposClubes.map(item => `<option value="${item}" ${clube.tipo === item ? 'selected' : ''}>${item}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">${t('clubDescription')}</label><textarea id="clube-descricao" class="form-control" rows="3">${clube.descricao || ''}</textarea></div><div class="form-row"><div class="form-group"><label class="form-label">${t('clubCoordinator')}</label><input type="text" id="clube-coordenador" class="form-control" value="${clube.coordenador || ''}" required></div><div class="form-group"><label class="form-label">${t('clubMeetings')}</label><input type="text" id="clube-reunioes" class="form-control" value="${clube.reunioes || ''}"></div></div>`; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('cancel')}</button><button type="button" class="btn btn--primary" onclick="guardarClube()">${t('save')}</button>`; document.getElementById('modal-generico').classList.add('visible'); }
+        async function abrirModalMembro(id = null) { editandoItemId = id; const membro = id ? (await getDoc(doc(db, getCollectionPath('membros'), id))).data() : {}; const clubesOptions = Array.from(clubesMap.entries()).map(([id, clube]) => `<option value="${id}" ${membro.clube_id === id ? 'selected' : ''}>${clube.nome}</option>`).join(''); document.getElementById('modal-titulo').textContent = t(id ? 'editMemberTitle' : 'newMemberTitle'); document.getElementById('modal-body').innerHTML = `<div class="form-group"><label class="form-label">${t('memberName')}</label><input type="text" id="membro-nome" class="form-control" value="${membro.nome || ''}" required></div><div class="form-row"><div class="form-group"><label class="form-label">${t('memberClass')}</label><select id="membro-turma" class="form-control" required>${appConfig.anosEscolaridade.map(item => `<option value="${item}" ${membro.turma === item ? 'selected' : ''}>${item}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">${t('memberClub')}</label><select id="membro-clube" class="form-control" required><option value="">${t('select')}</option>${clubesOptions}</select></div></div><div class="form-row"><div class="form-group"><label class="form-label">${t('memberRole')}</label><select id="membro-funcao" class="form-control" required>${appConfig.funcoesMembro.map(item => `<option value="${item}" ${membro.funcao === item ? 'selected' : ''}>${item}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">${t('memberContact')}</label><input type="email" id="membro-contacto" class="form-control" value="${membro.contacto || ''}"></div></div>`; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('cancel')}</button><button type="button" class="btn btn--primary" onclick="guardarMembro()">${t('save')}</button>`; document.getElementById('modal-generico').classList.add('visible'); }
+        async function abrirModalAtividade(id = null) { editandoItemId = id; const atividade = id ? (await getDoc(doc(db, getCollectionPath('atividades'), id))).data() : {}; const clubesOptions = Array.from(clubesMap.entries()).map(([id, clube]) => `<option value="${id}" ${atividade.clube_id === id ? 'selected' : ''}>${clube.nome}</option>`).join(''); document.getElementById('modal-titulo').textContent = t(id ? 'editActivityTitle' : 'newActivityTitle'); document.getElementById('modal-body').innerHTML = `<div class="form-group"><label class="form-label">${t('activityTitle')}</label><input type="text" id="atividade-titulo" class="form-control" value="${atividade.titulo || ''}" required></div><div class="form-group"><label class="form-label">${t('memberClub')}</label><select id="atividade-clube" class="form-control" required><option value="">${t('select')}</option>${clubesOptions}</select></div><div class="form-group"><label class="form-label">${t('activityDescription')}</label><textarea id="atividade-descricao" class="form-control" rows="3">${atividade.descricao || ''}</textarea></div><div class="form-row"><div class="form-group"><label class="form-label">${t('activityDate')}</label><input type="date" id="atividade-data" class="form-control" value="${atividade.data || ''}" required></div><div class="form-group"><label class="form-label">${t('activityTime')}</label><input type="time" id="atividade-hora" class="form-control" value="${atividade.hora || ''}" required></div></div><div class="form-row"><div class="form-group"><label class="form-label">${t('activityLocation')}</label><input type="text" id="atividade-local" class="form-control" value="${atividade.local || ''}"></div><div class="form-group"><label class="form-label">${t('activityResponsible')}</label><input type="text" id="atividade-responsavel" class="form-control" value="${atividade.responsavel || ''}"></div></div><div class="form-group"><label class="form-label">${t('activityStatus')}</label><select id="atividade-estado" class="form-control" required><option value="planeada" ${atividade.estado === 'planeada' ? 'selected' : ''}>${t('statusPlanned')}</option><option value="em_curso" ${atividade.estado === 'em_curso' ? 'selected' : ''}>${t('statusInProgress')}</option><option value="concluida" ${atividade.estado === 'concluida' ? 'selected' : ''}>${t('statusCompleted')}</option><option value="cancelada" ${atividade.estado === 'cancelada' ? 'selected' : ''}>${t('statusCanceled')}</option></select></div>`; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('cancel')}</button><button type="button" class="btn btn--primary" onclick="guardarAtividade()">${t('save')}</button>`; document.getElementById('modal-generico').classList.add('visible'); }
+        async function guardarClube() { const data = { nome: document.getElementById('clube-nome').value, tipo: document.getElementById('clube-tipo').value, descricao: document.getElementById('clube-descricao').value, coordenador: document.getElementById('clube-coordenador').value, reunioes: document.getElementById('clube-reunioes').value }; if (!data.nome || !data.tipo || !data.coordenador) { mostrarNotificacao(t('fillRequiredFields'), 'error'); return; } try { const docRef = editandoItemId ? doc(db, getCollectionPath('clubes'), editandoItemId) : doc(collection(db, getCollectionPath('clubes'))); await setDoc(docRef, data, { merge: true }); fecharModal(); mostrarNotificacao(t('saveSuccess'), 'success'); } catch (error) { console.error("Erro ao guardar clube:", error); mostrarNotificacao(t('saveError'), 'error'); } }
+        async function guardarMembro() { const data = { nome: document.getElementById('membro-nome').value, turma: document.getElementById('membro-turma').value, clube_id: document.getElementById('membro-clube').value, funcao: document.getElementById('membro-funcao').value, contacto: document.getElementById('membro-contacto').value }; if (!data.nome || !data.turma || !data.clube_id || !data.funcao) { mostrarNotificacao(t('fillRequiredFields'), 'error'); return; } try { const docRef = editandoItemId ? doc(db, getCollectionPath('membros'), editandoItemId) : doc(collection(db, getCollectionPath('membros'))); await setDoc(docRef, data, { merge: true }); fecharModal(); mostrarNotificacao(t('saveSuccess'), 'success'); } catch (error) { console.error("Erro ao guardar membro:", error); mostrarNotificacao(t('saveError'), 'error'); } }
+        async function guardarAtividade() { const data = { titulo: document.getElementById('atividade-titulo').value, clube_id: document.getElementById('atividade-clube').value, descricao: document.getElementById('atividade-descricao').value, data: document.getElementById('atividade-data').value, hora: document.getElementById('atividade-hora').value, local: document.getElementById('atividade-local').value, responsavel: document.getElementById('atividade-responsavel').value, estado: document.getElementById('atividade-estado').value }; if (!data.titulo || !data.clube_id || !data.data || !data.hora) { mostrarNotificacao(t('fillRequiredFields'), 'error'); return; } try { const docRef = editandoItemId ? doc(db, getCollectionPath('atividades'), editandoItemId) : doc(collection(db, getCollectionPath('atividades'))); await setDoc(docRef, data, { merge: true }); fecharModal(); mostrarNotificacao(t('saveSuccess'), 'success'); } catch (error) { console.error("Erro ao guardar atividade:", error); mostrarNotificacao(t('saveError'), 'error'); } }
+        function confirmarEliminacao(colecao, id) { document.getElementById('modal-titulo').textContent = t('confirmDeleteTitle'); document.getElementById('modal-body').innerHTML = `<p>${t('confirmDeleteBody')}</p>`; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('cancel')}</button><button type="button" class="btn btn--danger" onclick="eliminarItem('${colecao}', '${id}')">${t('delete')}</button>`; document.getElementById('modal-generico').classList.add('visible'); }
+        async function eliminarItem(colecao, id) { try { await deleteDoc(doc(db, getCollectionPath(colecao), id)); fecharModal(); mostrarNotificacao(t('deleteSuccess'), 'success'); } catch (error) { console.error("Erro ao eliminar item:", error); mostrarNotificacao(t('deleteError'), 'error'); } }
+        async function renderizarCalendario() { const container = document.getElementById('calendario-view'); container.innerHTML = `<div class="loading-state"><div class="loader"></div><p>${t('loading')}</p></div>`; const atividadesSnap = await getDocs(collection(db, getCollectionPath('atividades'))); const atividades = atividadesSnap.docs.map(doc => doc.data()); const month = calendarDate.getMonth(), year = calendarDate.getFullYear(); const weekdays = [...Array(7).keys()].map(i => new Intl.DateTimeFormat(currentLanguage, { weekday: 'short' }).format(new Date(2024, 0, i + 1))); const firstDayOfMonth = new Date(year, month, 1); const daysInMonth = new Date(year, month + 1, 0).getDate(); const dateGridOffset = (firstDayOfMonth.getDay() + 6) % 7; let daysHtml = Array(dateGridOffset).fill('<div class="calendar-day other-month"></div>').join(''); for (let i = 1; i <= daysInMonth; i++) { const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`; const atividadesDoDia = atividades.filter(a => a.data === dateStr); daysHtml += `<div class="calendar-day"><div class="day-number">${i}</div>${atividadesDoDia.map(a => `<div class="calendar-activity" title="${a.titulo}">${a.titulo}</div>`).join('')}</div>`; } container.innerHTML = `<div class="calendar-header"><button class="btn btn--secondary btn--icon" onclick="mudarMes(-1)"><i class="fas fa-chevron-left"></i></button><h3 class="text-lg font-semibold">${new Date(year, month).toLocaleString(currentLanguage, { month: 'long', year: 'numeric' })}</h3><button class="btn btn--secondary btn--icon" onclick="mudarMes(1)"><i class="fas fa-chevron-right"></i></button></div><div class="calendar-grid">${weekdays.map(d => `<div class="calendar-day-name">${d}</div>`).join('')}${daysHtml}</div>`; }
+        function mudarMes(change) { calendarDate.setMonth(calendarDate.getMonth() + change); renderizarCalendario(); }
+        function fecharModal() { document.getElementById('modal-generico').classList.remove('visible'); editandoItemId = null; }
+        function mostrarNotificacao(mensagem, tipo = 'success') { const notification = document.createElement('div'); notification.className = `notification notification--${tipo}`; notification.innerHTML = `<i class="fas fa-${tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'times-circle' : 'info-circle'}"></i><span>${mensagem}</span>`; document.body.appendChild(notification); setTimeout(() => notification.remove(), 4000); }
+        function formatarData(dateString) { if (!dateString) return 'Data inválida'; return new Date(dateString + 'T00:00:00').toLocaleDateString(currentLanguage, { day: '2-digit', month: 'long', year: 'numeric' }); }
+        function carregarConfiguracoes() { const container = document.getElementById('configuracoes-content'); const isDark = document.documentElement.getAttribute('data-theme') === 'dark'; container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><div class="card mb-8"><div class="card-header"><h3 class="card-title">${t('personalization')}</h3></div><div class="card-body space-y-3"><button class="btn btn--secondary w-full justify-start" onclick="abrirModalGerirCategoria('tiposClubes', t('manageClubTypes'))"><i class="fas fa-tags"></i> ${t('manageClubTypes')}</button><button class="btn btn--secondary w-full justify-start" onclick="abrirModalGerirCategoria('anosEscolaridade', t('manageSchoolYears'))"><i class="fas fa-graduation-cap"></i> ${t('manageSchoolYears')}</button><button class="btn btn--secondary w-full justify-start" onclick="abrirModalGerirCategoria('funcoesMembro', t('manageMemberRoles'))"><i class="fas fa-user-tag"></i> ${t('manageMemberRoles')}</button></div></div><div class="card"><div class="card-header"><h3 class="card-title">${t('appearance')}</h3></div><div class="card-body"><div class="theme-switch-wrapper"><label for="theme-switch">${t('darkTheme')}</label><label class="theme-switch"><input type="checkbox" id="theme-switch" onchange="toggleTheme()" ${isDark ? 'checked' : ''}><span class="slider round"></span></label></div></div></div></div><div><div class="card mb-8"><div class="card-header"><h3 class="card-title">${t('exportData')}</h3></div><div class="card-body"><p class="text-sm text-text-secondary mb-4">${t('exportDescription')}</p><div class="space-y-3"><button class="btn btn--secondary w-full justify-start" onclick="exportarDados('clubes')"><i class="fas fa-file-csv"></i> ${t('exportClubs')}</button><button class="btn btn--secondary w-full justify-start" onclick="exportarDados('membros')"><i class="fas fa-file-csv"></i> ${t('exportMembers')}</button><button class="btn btn--secondary w-full justify-start" onclick="exportarDados('atividades')"><i class="fas fa-file-csv"></i> ${t('exportActivities')}</button></div></div></div><div class="card border-2 border-red-200 dark:border-red-800"><div class="card-header"><h3 class="card-title text-red-600 dark:text-red-400">${t('dangerZone')}</h3></div><div class="card-body"><p class="text-sm text-text-secondary mb-4">${t('dangerZoneDescription')}</p><button class="btn btn--danger w-full justify-start" onclick="confirmarLimpezaTotal()"><i class="fas fa-trash-alt"></i> ${t('clearAllData')}</button></div></div></div></div>`; }
+        function carregarAjuda() { const helpContent = { pt: `<h3>1. Primeiros Passos</h3><p>Para começar, insira um nome para o seu <strong>Espaço de Trabalho</strong> (por exemplo, o nome da sua escola). Este nome irá isolar todos os seus dados.</p><h4>Navegação Principal</h4><p>No lado esquerdo, encontrará o menu de navegação que lhe dá acesso a todas as secções da aplicação.</p><h3>2. Dashboard</h3><p>Esta é a sua página inicial e oferece uma visão geral rápida da atividade dos seus clubes.</p><h3>3. Gestão de Clubes, Membros e Atividades</h3><p>Nestas secções, pode criar, visualizar, editar e apagar os clubes, os seus membros e as atividades planeadas.</p><h3>4. Calendário</h3><p>O calendário oferece uma visão mensal de todas as atividades planeadas.</p><h3>5. Configurações</h3><p>Esta secção permite-lhe adaptar a aplicação às suas necessidades e gerir os seus dados.</p><h4>Personalização</h4><ul><li><strong>Gerir Categorias:</strong> Personalize as listas de opções que aparecem nos formulários (tipos de clube, anos de escolaridade, etc.).</li><li><strong>Aparência:</strong> Ative o modo escuro ou mude o idioma.</li></ul><h4>Gestão de Dados</h4><ul><li><strong>Exportar Dados:</strong> Faça o download de listas em formato CSV.</li><li><strong>Limpar Dados do Workspace:</strong> Apaga permanentemente todos os dados <strong>apenas do workspace atual</strong>. Use com cuidado!</li></ul>`, en: `...`, es: `...` }; document.getElementById('ajuda-content').innerHTML = helpContent[currentLanguage]; }
+        function abrirModalGerirCategoria(key, title) { const items = appConfig[key] || []; document.getElementById('modal-titulo').textContent = title; let bodyHTML = `<div id="lista-categorias" class="space-y-2 mb-4">${items.map((item, index) => `<div class="flex items-center gap-2 p-2 border border-border rounded-md"><span class="flex-grow">${item}</span><button class="btn btn--danger btn--icon btn--small" onclick="removerItemCategoria('${key}', ${index})"><i class="fas fa-trash"></i></button></div>`).join('')}</div><div class="form-group flex gap-2 pt-4 border-t border-border"><input type="text" id="novo-item-categoria" class="form-control" placeholder="${t('addNewItemPlaceholder')}"><button class="btn btn--primary" onclick="adicionarItemCategoria('${key}')">${t('add')}</button></div>`; document.getElementById('modal-body').innerHTML = bodyHTML; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('close')}</button>`; document.getElementById('modal-generico').classList.add('visible'); }
+        async function adicionarItemCategoria(key) { const input = document.getElementById('novo-item-categoria'); const newItem = input.value.trim(); if (newItem && !appConfig[key].includes(newItem)) { appConfig[key].push(newItem); await guardarConfiguracoesApp(); const title = document.getElementById('modal-titulo').textContent; abrirModalGerirCategoria(key, title); } input.value = ''; }
+        async function removerItemCategoria(key, index) { appConfig[key].splice(index, 1); await guardarConfiguracoesApp(); const title = document.getElementById('modal-titulo').textContent; abrirModalGerirCategoria(key, title); }
+        async function guardarConfiguracoesApp() { try { const configRef = doc(db, getConfigPath()); await setDoc(configRef, appConfig); mostrarNotificacao(t('settingsSaved'), 'success'); } catch (error) { console.error("Erro ao guardar configurações:", error); mostrarNotificacao(t('settingsSaveError'), 'error'); } }
+        function toggleTheme() { const currentTheme = document.documentElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); }
+        function aplicarTemaSalvo() { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } }
+        async function exportarDados(colecao) { mostrarNotificacao(t('exportingData'), 'info'); try { const docsSnap = await getDocs(collection(db, getCollectionPath(colecao))); let dados = docsSnap.docs.map(doc => ({id: doc.id, ...doc.data()})); if (dados.length === 0) { mostrarNotificacao(t('noDataToExport'), 'warning'); return; } let cabecalhos; if (colecao === 'membros' || colecao === 'atividades') { dados = dados.map(item => ({...item, nome_clube: clubesMap.get(item.clube_id)?.nome || 'N/A'})); } if (dados.length > 0) { cabecalhos = Object.keys(dados[0]); } else { mostrarNotificacao(t('noDataToExport'), 'warning'); return; } const csvContent = [ cabecalhos.join(','), ...dados.map(row => cabecalhos.map(h => JSON.stringify(row[h] === undefined ? '' : row[h])).join(',')) ].join('\n'); const link = document.createElement("a"); const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' }); link.href = URL.createObjectURL(blob); link.download = `gestclube_${workspaceId}_${colecao}_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); mostrarNotificacao(t('exportSuccess'), 'success'); } catch (error) { console.error("Erro na exportação:", error); mostrarNotificacao(t('exportError'), 'error'); } }
+        function confirmarLimpezaTotal() { document.getElementById('modal-titulo').textContent = t('confirmClearAllTitle'); document.getElementById('modal-body').innerHTML = `<div class="text-center"><i class="fas fa-exclamation-triangle text-5xl text-red-500 mb-4"></i><h4 class="text-lg font-bold">${t('confirmClearAllTitle')}</h4><p class="text-text-secondary mt-2">${t('confirmClearAllBody')}</p><p class="mt-4">${t('confirmClearAllPrompt').replace(`<b>${t('wordToConfirmDeletion')}</b>`, `<b>${t('wordToConfirmDeletion')}</b>`)}</p><input type="text" id="confirmacao-limpeza" class="form-control mt-2 text-center" placeholder="${t('wordToConfirmDeletion')}"></div>`; document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn--secondary" onclick="fecharModal()">${t('cancel')}</button><button type="button" id="btn-confirmar-limpeza" class="btn btn--danger" disabled onclick="executarLimpezaTotal()">${t('confirmClearAllButton')}</button>`; const input = document.getElementById('confirmacao-limpeza'); const btn = document.getElementById('btn-confirmar-limpeza'); input.addEventListener('input', () => { btn.disabled = input.value !== t('wordToConfirmDeletion'); }); document.getElementById('modal-generico').classList.add('visible'); }
+        async function executarLimpezaTotal() { mostrarNotificacao(t('clearingData'), 'info'); fecharModal(); try { const batch = writeBatch(db); const collectionsToDelete = ['clubes', 'membros', 'atividades']; for (const colecao of collectionsToDelete) { const collectionRef = collection(db, getCollectionPath(colecao)); const docsSnap = await getDocs(collectionRef); docsSnap.forEach(doc => batch.delete(doc.ref)); } const configRef = doc(db, getConfigPath()); batch.delete(configRef); await batch.commit(); mostrarNotificacao(t('clearSuccess'), 'success'); await carregarConfiguracoesApp(); navegarPara('dashboard', true); } catch (error) { console.error("Erro ao limpar dados:", error); mostrarNotificacao(t('clearError'), 'error'); } }
+
+    </script>
+</body>
+</html>
